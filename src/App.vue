@@ -1,13 +1,15 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import Login from './components/Login.vue';
+
+import Navigation from './components/Navigation.vue';
 </script>
 
 <template>
 
-  <Suspense>
-      <Login/>
-  </Suspense>
+    <Suspense>
+        <Navigation/>
+    </Suspense>
+
+  <RouterView/>
 </template>
 
 <style scoped>

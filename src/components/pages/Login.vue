@@ -1,6 +1,6 @@
 <script setup>
     import { reactive } from 'vue';
-    import { useAppStore } from '../stores/app.js';
+    import { useAppStore } from '../../stores/app.js';
 
     const store = useAppStore();
 
