@@ -4,6 +4,7 @@ import { login } from '../services/auth.js';
 
 export const useAppStore = defineStore('app', () => {
     const user = reactive({});
+    const enums = reactive({});
 
     const userLoggedIn = computed(() => {
         return (user?.id ?? null) !== null;
@@ -23,5 +24,6 @@ export const useAppStore = defineStore('app', () => {
         Object.assign(user, data);
     }
 
-    return {user, userLoggedIn, doLogin };
+
+    return {user, userLoggedIn, doLogin, enums };
 });
