@@ -7,7 +7,6 @@ import App from './App.vue'
 import routes from './router.js';
 
 axios.defaults.withCredentials = true;
-axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 
 const pinia = createPinia();
 
