@@ -1,28 +1,47 @@
 <script setup>
-    import { onMounted } from 'vue';
-    import axios from 'axios';
+    import { ref, watch } from 'vue';
+    import { getServices } from '../../services/service.js';
+    import Pagination from '../Pagination.vue';
 
-    onMounted(async () => await getData())
+    const services = ref([]);
 
-    async function getData() {
-        try {
-            const res = await axios.get("/api/services");
+    const url = ref(null);
 
-            console.log(res.data);
-        }
-        catch (e) {
-            console.warn(e);
-        }
-    }
+    watch(url, async () => {
+        services.value = await getServices(url.value)
+    }, {immediate: true})
+
 
 </script>
 
 <template>
-    <div>
-        <button type="button" @click.prevent="async () => console.log(await getData())">get service</button>
-    </div>
+    <section class="services-container">
+        <div class="service-wrapper" v-for="service in services?.data" :key="service.id">
+            <header>
+                <h3>{{service.name}} -
+                    <span>{{service.frequency}}</span>
+                </h3>
+            </header>
+            <div>
+                <p>{{ service.description ??  'descrizione non definita' }}</p>
+                <p>Prezzo standard: {{service.fee}} €</p>
+                <p>Costi extra: {{service.additional_fee}} €</p>
+            </div>
+        </div>
+    </section>
+
+    <Pagination
+        :meta="services?.meta"
+        @navigate="(destination) => url = destination"
+    />
 </template>
 
 <style scoped>
+    .service-wrapper {
+        border: 2px solid white;
+        border-radius: 20px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
 
 </style>
