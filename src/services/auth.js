@@ -24,7 +24,7 @@ export async function login(data) {
 
 export async function logout() {
     try {
-        await axios.post("/logout");
+        await axios.post("/logout" );
     }
     catch (e)
     {
