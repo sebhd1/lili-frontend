@@ -2,13 +2,26 @@
     import { onMounted, ref } from 'vue';
     import { useAppStore } from '../../stores/app.js';
     import { getFrequency } from '../../services/common.js';
+    import { createService } from '../../services/service.js';
 
-    const service = ref({
-        frequency: null,
-        name: null,
-        description: null,
-        fee: null,
-        additional_fee: null,
+    const props = defineProps({
+        id: null,
+        service:{
+            type: Object,
+            required: false,
+        }
+    })
+
+    defineEmits([
+        'create-service'
+    ]);
+
+    const form = ref({
+        frequency: props.service?.frequency,
+        name: props.service?.name,
+        description: props.service?.description,
+        fee: props.service?.fee,
+        additional_fee: props.service?.additional_fee,
     });
 
     const store = useAppStore();
@@ -22,10 +35,10 @@
 </script>
 
 <template>
-    <form action="">
+    <form @submit.prevent="async () => await createService(form)" id="service-creation">
         <div>
             <label for="frequency">Frequenza:</label>
-            <select name="frequency" id="frequency" required v-model="service.frequency">
+            <select name="frequency" id="frequency" required v-model="form.frequency">
                 <option :value="null">Seleziona la frequenza</option>
                 <option
                     v-for="(frequencyLabel, frequencyValue) of store.enums.frequency"
@@ -40,7 +53,7 @@
         <div>
             <label for="name">Nome:</label>
             <input
-                v-model.trim="service.name"
+                v-model.trim="form.name"
                 id="name"
                 placeholder="E.g. Trasporto bambini"
                 type="text"
@@ -51,7 +64,7 @@
         <div>
             <label for="description">Descrizione:</label>
             <textarea
-                v-model.trim="service.description"
+                v-model.trim="form.description"
                 id="description"
                 name="description"
                 placeholder="E.g. descrizione del servizio"
@@ -61,7 +74,7 @@
         <div>
             <label for="fee">Prezzo:</label>
             <input
-                v-model.number="service.fee"
+                v-model.number="form.fee"
                 id="fee"
                 type="number"
                 required
@@ -71,7 +84,7 @@
         <div>
             <label for="additional_fee">Costi extra:</label>
             <input
-                v-model.number="service.additional_fee"
+                v-model.number="form.additional_fee"
                 id="additional_fee"
                 type="number"
             >
@@ -83,5 +96,4 @@
 </template>
 
 <style scoped>
-
 </style>
