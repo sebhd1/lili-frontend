@@ -15,6 +15,24 @@ const router = createRouter({
     routes,
 });
 
+
+router.beforeEach(async (to, from) => {
+    const requiresAuth = to.matched.some((route) => route.meta.requiresAuth);
+
+    if(requiresAuth) {
+        const user = localStorage.getItem('user');
+
+        if(!user) {
+            return { name: 'login', }
+        }
+
+        if(to.name === 'login') {
+            console.log(to);
+            return {name: 'home'};
+        }
+    }
+});
+
 createApp(App)
     .use(pinia)
     .use(router)

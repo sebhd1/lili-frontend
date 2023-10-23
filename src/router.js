@@ -8,7 +8,12 @@ import ServiceForm from './components/services/ServiceForm.vue';
 export default [
     { path: '/', component: Home, name: 'home' },
     { path: '/login', component: Login, name: 'login' },
-    { path: '/logout', component: Logout, name: 'logout' },
+    {
+        path: '/logout',
+        component: Logout,
+        name: 'logout',
+        meta: {requiresAuth: true,},
+    },
     {
         path: '/services', component: View, children: [
             {
@@ -30,10 +35,12 @@ export default [
 
             {
                 path: ':id/edit',
-                component: '',
-                name: 'service.edit',
+                component: ServiceForm,
+                name: 'services.edit',
+                props: true,
             },
 
-        ]
+        ],
+        meta: {requiresAuth: true,}
     },
 ]

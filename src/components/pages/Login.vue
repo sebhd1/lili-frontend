@@ -1,6 +1,9 @@
 <script setup>
     import { reactive } from 'vue';
     import { useAppStore } from '../../stores/app.js';
+    import { useRouter } from 'vue-router';
+
+    const router = useRouter();
 
     const store = useAppStore();
 
@@ -9,10 +12,17 @@
         password: null,
     });
 
+    async function performLogin() {
+        await store.doLogin(form);
+        await router.push({
+            name: 'home',
+        })
+    }
+
 </script>
 
 <template>
-    <form @submit.prevent="async () => await store.doLogin(form)">
+    <form @submit.prevent="async () => await performLogin()">
         <div>
             <label for="email">Email:</label>
             <input
