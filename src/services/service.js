@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { api } from './common.js';
 
 export async function getServices(url = null) {
@@ -24,6 +23,16 @@ export async function createService(service) {
 
     try {
         const res = await api.post('/api/services', service);
+        return res.data;
+    }
+    catch (e) {
+        console.warn(e);
+    }
+}
+
+export async function showService(serviceId) {
+    try {
+        const res = await api.get(`/api/services/${serviceId}`);
         return res.data;
     }
     catch (e) {
