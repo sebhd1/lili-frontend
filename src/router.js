@@ -4,6 +4,9 @@ import Logout from './components/pages/Logout.vue';
 import View from './components/pages/View.vue';
 import ServiceIndex from './components/services/ServiceIndex.vue';
 import ServiceForm from './components/services/ServiceForm.vue';
+import OrderIndex from './components/Orders/OrderIndex.vue';
+import ClientIndex from './components/Clients/ClientIndex.vue';
+import ClientForm from './components/Clients/ClientForm.vue';
 
 export default [
     { path: '/', component: Home, name: 'home' },
@@ -17,7 +20,7 @@ export default [
     {
         path: '/services', component: View, children: [
             {
-                path:'',
+                path: '',
                 component: ServiceIndex,
                 name: 'services.index'
             },
@@ -43,4 +46,36 @@ export default [
         ],
         meta: {requiresAuth: true,}
     },
+
+    { path: '/orders', component: OrderIndex, name: 'orders.index' },
+
+    { path: '/clients', component: View, children: [
+            {
+                path: '',
+                component: ClientIndex,
+                name: 'clients.index'
+            },
+            {
+                path: 'create',
+                component: ClientForm,
+                name: 'clients.create',
+            },
+
+            {
+                path: ':id',
+                component: '',
+                name: 'clients.show',
+            },
+
+            {
+                path: ':id/edit',
+                component: ClientForm,
+                name: 'clients.edit',
+                props: true,
+            },
+
+        ],
+        meta: {requiresAuth: true,}
+    },
+
 ]
