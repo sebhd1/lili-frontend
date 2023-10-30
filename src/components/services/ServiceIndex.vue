@@ -9,7 +9,7 @@
 
     watch(url, async () => {
         services.value = await getServices(url.value)
-    }, {immediate: true})
+    }, {immediate: true});
 
 </script>
 
@@ -22,7 +22,7 @@
                 </h3>
             </header>
             <div>
-                <p>{{ service.description ??  'descrizione non definita' }}</p>
+                <p>{{ service.description ?? 'descrizione non definita' }}</p>
                 <p>Prezzo standard: {{service.fee}} €</p>
                 <p>Costi extra: {{service.additional_fee}} €</p>
             </div>

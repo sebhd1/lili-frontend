@@ -1,8 +1,10 @@
 <script setup>
-    import { onMounted, ref } from 'vue';
+    import { computed, onMounted, ref } from 'vue';
     import { useAppStore } from '../../stores/app.js';
     import { getFrequency } from '../../services/common.js';
-    import { createService } from '../../services/service.js';
+    import { createService, showService, updateService } from '../../services/service.js';
+
+    const service = ref(null);
 
     const props = defineProps({
         id: null,
@@ -10,32 +12,60 @@
             type: Object,
             required: false,
         }
-    })
+    });
 
-    defineEmits([
-        'create-service'
+    const emit = defineEmits([
+        'create-service',
+        'update-service',
     ]);
 
-    const form = ref({
-        frequency: props.service?.frequency,
-        name: props.service?.name,
-        description: props.service?.description,
-        fee: props.service?.fee,
-        additional_fee: props.service?.additional_fee,
+    const form = {
+        frequency: null,
+        name: null,
+        description: null,
+        fee: null,
+        additional_fee: null,
+    };
+
+    onMounted(async () => {
+        service.value = props.service;
+        if (props.id && !service.value) {
+            service.value = (await showService(props.id)).data;
+        }
+        Object.assign(form, service.value);
+    });
+
+    const buttonText = computed(() => {
+        return service.value ? 'Edit' : 'Create';
     });
 
     const store = useAppStore();
 
-    onMounted(async() => {
+    onMounted(async () => {
         if(!(store.enums.frequency ?? false)) {
             store.enums.frequency = await getFrequency();
         }
     });
 
+async function saveService() {
+    let eventName = null;
+    let target = null;
+
+    if(props.id) {
+       target = await updateService(form);
+       eventName = 'update-service';
+    }
+    else {
+        target = await createService(form);
+        eventName = 'create-service';
+    }
+    emit(eventName, target);
+}
+
 </script>
 
 <template>
-    <form @submit.prevent="async () => await createService(form)" id="service-creation">
+    <form @submit.prevent="saveService" id="service-creation">
         <div>
             <label for="frequency">Frequenza:</label>
             <select name="frequency" id="frequency" required v-model="form.frequency">
@@ -90,7 +120,7 @@
             >
         </div>
 
-        <button type="submit">Crea</button>
+        <button type="submit">{{buttonText}}</button>
     </form>
 
 </template>
