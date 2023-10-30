@@ -15,6 +15,7 @@
 
 <template>
     <section class="services-container">
+        <RouterLink :to="{name: 'services.create'}">Crea un servizio</RouterLink>
         <div class="service-wrapper" v-for="service in services?.data" :key="service.id">
             <header>
                 <h3>{{service.name}} -
