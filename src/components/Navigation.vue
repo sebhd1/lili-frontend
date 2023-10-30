@@ -8,7 +8,9 @@
 <template>
     <nav>
         <div v-if="store.userLoggedIn">
-            <RouterLink  :to="{name: 'services.index'}">Servizi</RouterLink>
+            <RouterLink :to="{name: 'services.index'}">Servizi</RouterLink>
+            <RouterLink :to="{name: 'clients.index'}">Clienti</RouterLink>
+            <RouterLink :to="{name: 'orders.index'}">Ordini</RouterLink>
             <RouterLink :to="{name: 'services.create'}">Crea un servizio</RouterLink>
             <RouterLink :to="{name: 'logout'}">Logout</RouterLink>
         </div>
