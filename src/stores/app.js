@@ -1,8 +1,6 @@
 import { defineStore } from 'pinia';
 import { computed, reactive, ref } from 'vue';
 import { login, logout } from '../services/auth.js';
-import router from '../router.js';
-import { useRouter } from 'vue-router';
 
 function loadUserFromStorage() {
     const userJSON =  localStorage.getItem('user');
