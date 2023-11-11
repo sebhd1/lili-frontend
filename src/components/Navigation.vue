@@ -2,7 +2,6 @@
     import { useAppStore } from '../stores/app.js';
 
     const store = useAppStore();
-
 </script>
 
 <template>
