@@ -19,13 +19,13 @@
 
     <section class="client-container">
         <RouterLink :to="{name: 'clients.create'}">Aggiungi un cliente</RouterLink>
-        <div class="client-wrapper" v-for="client in  clients?.data" :key="client.id">
+        <div class="client-wrapper" v-for="client in clients?.data" :key="client.id">
             <header>
                 <h3>{{client.full_name}}</h3>
                 <p>{{client.phone}}</p>
             </header>
 
-            <RouterLink :to="{name: 'clients.edit', params:{id:client.id}, client}">Edit</RouterLink>
+            <RouterLink :to="{name: 'clients.edit', params:{id:client.id}}">Edit</RouterLink>
         </div>
     </section>
 

@@ -1,10 +1,13 @@
 <script setup>
-    import { computed, onMounted, ref } from 'vue';
+    import { computed, } from 'vue';
     import { useAppStore } from '../../stores/app.js';
     import { getFrequency } from '../../services/common.js';
     import { createService, showService, updateService } from '../../services/service.js';
+    import { useRouter } from 'vue-router';
+    import useFetchEntity from '../../composables/fetchEntity.js';
 
-    const service = ref(null);
+
+    const router = useRouter();
 
     const props = defineProps({
         id: null,
@@ -19,6 +22,8 @@
         'update-service',
     ]);
 
+    const store = useAppStore();
+
     const form = {
         frequency: null,
         name: null,
@@ -27,39 +32,44 @@
         additional_fee: null,
     };
 
-    onMounted(async () => {
-        service.value = props.service;
-        if (props.id && !service.value) {
-            service.value = (await showService(props.id)).data;
+
+    const {entity: service, saveEntity: saveService} = useFetchEntity(props.id, form,{
+        get: showService,
+        create: createService,
+        update: updateService,
+    }, {
+        async onBeforeMounted() {
+            if (!(store.enums.frequency ?? false)) {
+                store.enums.frequency = await getFrequency();
+            }
+        },
+
+        onUpdate(newService) {
+            emit('update-service', newService)
+        },
+        onCreate(service) {
+            emit('create-service', service)
+        },
+
+        onAfterSave() {
+            if(!props.service) {
+                redirect()
+            }
         }
-        Object.assign(form, service.value);
     });
 
     const buttonText = computed(() => {
         return service.value ? 'Edit' : 'Create';
     });
 
-    const store = useAppStore();
+ function redirect() {
 
-    onMounted(async () => {
-        if(!(store.enums.frequency ?? false)) {
-            store.enums.frequency = await getFrequency();
-        }
-    });
-
-async function saveService() {
-    let eventName = null;
-    let target = null;
-
-    if(props.id) {
-       target = await updateService(form);
-       eventName = 'update-service';
+    if(!(form.fee || form.name)) {
+       throw new Error('Some required fields are empty!');
     }
-    else {
-        target = await createService(form);
-        eventName = 'create-service';
-    }
-    emit(eventName, target);
+     router.push({
+        name: 'services.index',
+    })
 }
 
 </script>

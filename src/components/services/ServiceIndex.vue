@@ -11,6 +11,7 @@
         services.value = await getServices(url.value)
     }, {immediate: true});
 
+
 </script>
 
 <template>
@@ -27,7 +28,7 @@
                 <p>Prezzo standard: {{service.fee}} €</p>
                 <p>Costi extra: {{service.additional_fee}} €</p>
             </div>
-            <RouterLink :to="{name: 'services.edit', params:{id:service.id}, service}">Edit</RouterLink>
+            <RouterLink :to="{name: 'services.edit', params:{id:service.id}}">Edit</RouterLink>
         </div>
     </section>
 
