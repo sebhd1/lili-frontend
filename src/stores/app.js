@@ -17,6 +17,7 @@ export const useAppStore = defineStore('app', () => {
     const enums = reactive({});
 
     const userLoggedIn = computed(() => {
+
         return (user.value?.id ?? null) !== null;
     });
 
@@ -32,7 +33,7 @@ export const useAppStore = defineStore('app', () => {
             throw new Error("Authentication failed!")
         }
         user.value = data;
-        localStorage.setItem('user', JSON.stringify(user));
+        localStorage.setItem('user', JSON.stringify(user.value));
     }
 
     async function doLogout() {
