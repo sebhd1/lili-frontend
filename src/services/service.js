@@ -1,7 +1,6 @@
 import { api } from './common.js';
 
 export async function getServices(url = null) {
-
     try {
         const res = await api.get(url ?? '/api/services');
         return res.data;
@@ -20,7 +19,6 @@ const config = {
 
 
 export async function createService(service) {
-
     try {
         const res = await api.post('/api/services', service);
         return res.data;
@@ -41,7 +39,6 @@ export async function showService(serviceId) {
 }
 
 export async function updateService(service) {
-
     try {
         const res = await api.put(`/api/services/${service.id}`, service);
         return res.data;

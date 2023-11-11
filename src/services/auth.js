@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { api, getXSRFCookie } from './common.js';
 
 export async function login(data) {

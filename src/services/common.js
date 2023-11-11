@@ -23,3 +23,14 @@ export async function getFrequency() {
         console.warn(e);
     }
 }
+
+export async function getStatus() {
+    try {
+        const res = await api.get("/api/shared/enums/order-status");
+        return res.data.data;
+    }
+
+    catch (e) {
+        console.warn(e);
+    }
+}
