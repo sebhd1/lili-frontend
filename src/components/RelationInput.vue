@@ -19,6 +19,10 @@
         'update:modelValue'
     ]);
 
+    function isSelected(id) {
+        return props.modelValue == id;
+    }
+
 
     onMounted(async() => {
         entities.value = await props.endpoint()
@@ -34,10 +38,15 @@
             :key="entity.id"
         >
             <slot
-                :setSelection="(entityId) => $emit('update:modelValue', entityId)"
                 :data="entity"
-                :selected="modelValue == entity.id"
+                :selected="isSelected(entity.id)"
             />
+            <button
+                @click.prevent="$emit('update:modelValue', entity.id)"
+                type="button"
+                :disabled="isSelected(entity.id)"
+            >{{ isSelected(entity.id) ? 'Selezionato' : 'Seleziona' }}
+            </button>
 
         </div>
         <Pagination

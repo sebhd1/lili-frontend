@@ -2,18 +2,19 @@
 
     import useFetchEntity from '../../composables/fetchEntity.js';
     import { createOrder, showOrder, updateOrder } from '../../services/order.js';
-    import { computed, } from 'vue';
+    import { computed, reactive, ref, watch, } from 'vue';
     import { useAppStore } from '../../stores/app.js';
     import { getStatus } from '../../services/common.js';
     import Modal from '../Modal.vue';
     import RelationInput from '../RelationInput.vue';
-    import { getClients } from '../../services/client.js';
     import { getServices } from '../../services/service.js';
     import useModal from '../../composables/modal.js';
+    import { useRouter } from 'vue-router';
 
 
-    const {modalActive: clientModalActive, toggleModal: toggleClientModal} = useModal();
     const {modalActive: serviceModalActive, toggleModal: toggleServiceModal} = useModal();
+
+    const router = useRouter();
 
 
     const props = defineProps({
@@ -32,9 +33,26 @@
         status: null,
         price: null,
         discount: null,
-        client_id: null,
+        starts_at: null,
+        ends_at: null,
         service_id: null,
-    }
+    };
+
+
+    const startsAt = ref(null);
+
+    watch(startsAt, () => {
+        if (!startsAt.value) {
+            return null;
+        }
+
+        const dateString = (new Date(startsAt.value)).toISOString();
+        form.starts_at = dateString.substring(0, dateString.lastIndexOf(':'));
+    });
+
+    watch(() => form.starts_at,() => {
+        startsAt.value = new Date(form.starts_at)
+    });
 
     const store = useAppStore();
 
@@ -49,19 +67,36 @@
                 store.enums.status = await getStatus();
             }
         },
+
+        async onFetch(entity) {
+            if (!entity) {
+                entity.status ??= 'pending'
+            }
+        },
         onUpdate(newOrder) {
             emit('update-order', newOrder)
         },
         onCreate(order) {
             emit('create-order', order)
+            console.log(order)
         },
 
         onAfterSave() {
-            if(!props.order) {
+            /*if(!props.order) {
                 redirect();
-            }
+            }*/
         }
     });
+
+   /* function redirect() {
+
+        if(!(form.status || form.surname || form.phone)) {
+            throw new Error('Some required fields are empty!');
+        }
+        router.push({
+            name: 'orders.index',
+        })
+    }*/
 
     const buttonText = computed(() => {
         return order.value ? 'Edit' : 'Create';
@@ -72,7 +107,7 @@
 <template>
 
     <form @submit.prevent="saveOrder" id="order-form">
-        <div>
+        <div v-if="order?.id !== null">
             <label for="status">Status:</label>
             <select name="status" id="status" required v-model="form.status">
                 <option :value="null">Seleziona lo stato</option>
@@ -107,26 +142,25 @@
             >
         </div>
 
-        <Modal v-model="clientModalActive">
-            <RelationInput
-                v-model="form.client_id"
-                :endpoint="getClients"
-                :key="`client-${form.client_id}`"
+        <div>
+            <label for="starts-at">Inizia il:</label>
+            <input
+                id="starts-at"
+                type="datetime-local"
+                v-model="startsAt"
+                required
             >
-                <template #default="{data:client, selected, setSelection}">
-                    <div>
-                        <p>{{ client.full_name }}</p>
-                        <p>{{ client.phone }}</p>
-                        <button
-                            @click.prevent="setSelection(client.id)"
-                            type="button"
-                            :disabled="selected"
-                        >{{ selected ? 'Selezionato' : 'Seleziona' }}
-                        </button>
-                    </div>
-                </template>
-            </RelationInput>
-        </Modal>
+        </div>
+
+        <div>
+            <label for="ends-at">Finisce il:</label>
+            <input
+                id="ends-at"
+                type="datetime-local"
+                v-model="endsAt"
+
+            >
+        </div>
 
         <Modal v-model="serviceModalActive">
             <RelationInput
@@ -135,19 +169,11 @@
                 :key="`service-${form.service_id}`"
             >
                 <template #default="{data:service, selected}">
-
                     <p>{{ service.name }}</p>
-                    <button
-                        @click.prevent="form.service_id = service_id"
-                        type="button"
-                        :disabled="selected"
-                    >{{ selected ? 'Selezionato' : 'Seleziona' }}
-                    </button>
                 </template>
             </RelationInput>
         </Modal>
 
-        <button @click.prevent="toggleClientModal" type="button">Scegli Cliente</button>
         <button @click.prevent="toggleServiceModal" type="button">Scegli Servizio</button>
 
         <button type="submit">{{buttonText}}</button>
