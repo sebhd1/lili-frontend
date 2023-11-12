@@ -1,47 +1,53 @@
 <script setup>
 
+    import Pagination from './Pagination.vue';
+    import { onMounted, ref } from 'vue';
 
-    defineProps({
-        modalActive: {
-            type: Boolean,
+    let entities = ref([]);
+    let urlWithQuery = ref(null);
+
+    const props = defineProps({
+        endpoint: {
+            type: Function,
             required: true,
-        }
+        },
+
+        modelValue: null,
     });
 
+    defineEmits([
+        'update:modelValue'
+    ]);
+
+
+    onMounted(async() => {
+        entities.value = await props.endpoint()
+    });
 </script>
 
 <template>
-    <transition-group name="modal-animation">
-        <div v-show="modalActive">
-            <transition name="modal-animation-inner">
-                <div v-show="modalActive" class="modal-inner">
-                    <!--- Modal Content can be clients or services--->
-                    <slot />
-                </div>
-            </transition>
-        </div>
-    </transition-group>
 
+    <div>
+        <div
+            class="modal-content"
+            v-for="entity in entities?.data"
+            :key="entity.id"
+        >
+            <slot
+                :setSelection="(entityId) => $emit('update:modelValue', entityId)"
+                :data="entity"
+                :selected="modelValue == entity.id"
+            />
+
+        </div>
+        <Pagination
+            :meta="entities?.meta"
+            @navigate="(destination) => urlWithQuery = destination"
+        />
+    </div>
 
 </template>
 
 <style scoped>
-
-    header {
-        padding: 0.50rem;
-        border: 2px solid white;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 1rem;
-        border-radius: 20px;
-        margin-bottom: 1rem;
-
-        &:hover {
-            border-color: darkgreen;
-            color: green;
-        }
-    }
 
 </style>

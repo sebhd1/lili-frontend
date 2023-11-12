@@ -2,18 +2,19 @@
 
     import useFetchEntity from '../../composables/fetchEntity.js';
     import { createOrder, showOrder, updateOrder } from '../../services/order.js';
-    import { computed, ref } from 'vue';
+    import { computed, } from 'vue';
     import { useAppStore } from '../../stores/app.js';
     import { getStatus } from '../../services/common.js';
+    import Modal from '../Modal.vue';
     import RelationInput from '../RelationInput.vue';
-    import GetAllClients from '../GetAllClients.vue';
-    import GetAllServices from '../GetAllServices.vue';
+    import { getClients } from '../../services/client.js';
+    import { getServices } from '../../services/service.js';
+    import useModal from '../../composables/modal.js';
 
-    const modalActive = ref(false);
 
-    const toggleModal = () => {
-        modalActive.value = !modalActive.value;
-    }
+    const {modalActive: clientModalActive, toggleModal: toggleClientModal} = useModal();
+    const {modalActive: serviceModalActive, toggleModal: toggleServiceModal} = useModal();
+
 
     const props = defineProps({
         id: null,
@@ -31,6 +32,8 @@
         status: null,
         price: null,
         discount: null,
+        client_id: null,
+        service_id: null,
     }
 
     const store = useAppStore();
@@ -55,7 +58,7 @@
 
         onAfterSave() {
             if(!props.order) {
-                redirect()
+                redirect();
             }
         }
     });
@@ -104,15 +107,51 @@
             >
         </div>
 
-        <relation-input :modal-active="modalActive">
-            <GetAllClients/>
-        </relation-input>
-        <button @click.prevent="toggleModal" type="button">Apri modale</button>
+        <Modal v-model="clientModalActive">
+            <RelationInput
+                v-model="form.client_id"
+                :endpoint="getClients"
+                :key="`client-${form.client_id}`"
+            >
+                <template #default="{data:client, selected, setSelection}">
+                    <div>
+                        <p>{{ client.full_name }}</p>
+                        <p>{{ client.phone }}</p>
+                        <button
+                            @click.prevent="setSelection(client.id)"
+                            type="button"
+                            :disabled="selected"
+                        >{{ selected ? 'Selezionato' : 'Seleziona' }}
+                        </button>
+                    </div>
+                </template>
+            </RelationInput>
+        </Modal>
+
+        <Modal v-model="serviceModalActive">
+            <RelationInput
+                v-model="form.service_id"
+                :endpoint="getServices"
+                :key="`service-${form.service_id}`"
+            >
+                <template #default="{data:service, selected}">
+
+                    <p>{{ service.name }}</p>
+                    <button
+                        @click.prevent="form.service_id = service_id"
+                        type="button"
+                        :disabled="selected"
+                    >{{ selected ? 'Selezionato' : 'Seleziona' }}
+                    </button>
+                </template>
+            </RelationInput>
+        </Modal>
+
+        <button @click.prevent="toggleClientModal" type="button">Scegli Cliente</button>
+        <button @click.prevent="toggleServiceModal" type="button">Scegli Servizio</button>
 
         <button type="submit">{{buttonText}}</button>
     </form>
-
-
 </template>
 
 <style scoped>
