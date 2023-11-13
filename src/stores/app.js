@@ -14,6 +14,7 @@ function loadUserFromStorage() {
 
 export const useAppStore = defineStore('app', () => {
     const user = ref(loadUserFromStorage());
+    const theme = ref('dark');
     const enums = reactive({});
 
     const userLoggedIn = computed(() => {
