@@ -7,20 +7,20 @@ export default function useFetchEntity(id, form, api = {}, hooks = {}) {
 
     onMounted(async() => {
         if(typeof hooks.onBeforeMounted === 'function'){
-            await hooks.onBeforeMounted.call(this, entity)
+            await hooks.onBeforeMounted.call(this, entity.value)
         }
 
         if (id && !entity.value) {
             entity.value = (await api.get(id)).data;
 
             if(typeof hooks.onFetch === 'function'){
-                await hooks.onFetch.call(this, entity)
+               entity.value = await hooks.onFetch.call(this, entity.value)
             }
         }
         Object.assign(form, entity.value);
 
         if(typeof hooks.onAfterMounted === 'function'){
-            await hooks.onAfterMounted.call(this, entity)
+            await hooks.onAfterMounted.call(this, entity.value)
         }
     });
 
