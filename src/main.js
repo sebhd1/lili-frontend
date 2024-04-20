@@ -5,8 +5,10 @@ import axios from 'axios';
 import './style.css'
 import App from './App.vue'
 import routes from './router.js';
-
 axios.defaults.withCredentials = true;
+
+
+
 
 const pinia = createPinia();
 

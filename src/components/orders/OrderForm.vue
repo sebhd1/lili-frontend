@@ -2,7 +2,7 @@
 
     import useFetchEntity from '../../composables/fetchEntity.js';
     import { createOrder, showOrder, updateOrder } from '../../services/order.js';
-    import { computed, reactive, ref, watch, } from 'vue';
+    import { computed, ref, watch, } from 'vue';
     import { useAppStore } from '../../stores/app.js';
     import { getStatus } from '../../services/common.js';
     import Modal from '../Modal.vue';
@@ -10,6 +10,7 @@
     import { getServices } from '../../services/service.js';
     import useModal from '../../composables/modal.js';
     import { useRouter } from 'vue-router';
+    import OrderPassengerContainer from './OrderPassengerContainer.vue';
 
 
     const {modalActive: serviceModalActive, toggleModal: toggleServiceModal} = useModal();
@@ -68,9 +69,9 @@
             }
         },
 
-        async onFetch(entity) {
+        async onAfterMounted(entity) {
             if (!entity) {
-                entity.status ??= 'pending'
+                form.status ??= 'pending'
             }
         },
         onUpdate(newOrder) {
@@ -107,7 +108,10 @@
 <template>
 
     <form @submit.prevent="saveOrder" id="order-form">
-        <div v-if="order?.id !== null">
+
+        <OrderPassengerContainer />
+
+        <div v-if="order?.id">
             <label for="status">Status:</label>
             <select name="status" id="status" required v-model="form.status">
                 <option :value="null">Seleziona lo stato</option>
@@ -181,5 +185,9 @@
 </template>
 
 <style scoped>
+
+    #order-form {
+        padding: 2rem;
+    }
 
 </style>

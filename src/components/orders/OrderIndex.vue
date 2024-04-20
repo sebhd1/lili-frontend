@@ -1,6 +1,6 @@
 <script setup>
 
-    import { ref, watch } from 'vue';
+    import { onMounted, ref, watch } from 'vue';
     import { getOrders } from '../../services/order.js';
     import Pagination from '../Pagination.vue';
 
@@ -13,6 +13,8 @@
 
     }, {immediate: true});
 
+
+
 </script>
 
 <template>
@@ -20,7 +22,7 @@
             <RouterLink :to="{name: 'orders.create'}">Crea un ordine</RouterLink>
             <div class="order-wrapper" v-for="order in orders?.data" :key="order.id">
                 <header>
-                    <h3>{{order.status}}</h3>
+                    <h3>{{order.status_label}}</h3>
                 </header>
                 <div>
                     <p>Prezzo: {{order.price}} €</p>

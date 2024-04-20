@@ -4,12 +4,15 @@
     import { getClients } from '../../services/client.js';
     import Pagination from '../Pagination.vue';
 
+    import {ray} from 'node-ray/web'
+
     let clients = ref([]);
 
     const url = ref(null);
 
     watch(url, async () => {
         clients.value = await getClients(url.value)
+        ray(clients.value)
     }, {immediate: true});
 
 

@@ -20,7 +20,7 @@
         <div class="service-wrapper" v-for="service in services?.data" :key="service.id">
             <header>
                 <h3>{{service.name}} -
-                    <span>{{service.frequency}}</span>
+                    <span>{{service.frequency_label}}</span>
                 </h3>
             </header>
             <div>
